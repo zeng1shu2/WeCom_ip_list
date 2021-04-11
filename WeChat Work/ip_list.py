@@ -80,9 +80,9 @@ def main(fo_email, _url):
 
 if __name__ == '__main__':
     _fo_email = str(input('请输入接收通知的邮箱地址：'))
-    if _fo_email.endswith('@zlg.cn'):
+    if _fo_email.endswith('@xx.xx'):
         _url = str(input("请输入AC管理地址："))
-        if _url.endswith(':25840'):
+        if _url.endswith(':xxxx'):
             main(_fo_email, _url)
         else:
             raise TypeError('输入的格式不正确')
