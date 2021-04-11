@@ -1,13 +1,13 @@
 # coding:utf-8
 
 mali_config = {
-    'address': '192.168.0.10',
-    'username': 'system@zlg.cn',
-    'password': 'emxnbWN1IUAjMQ==',
-    'sender': 'system@zlg.cn'
+    'address': 'x.x.x.x',
+    'username': 'xx@xx.xx',
+    'password': '********',
+    'sender': 'xx@xx.xx'
 }
 ac_user_info = {
     'user': 'admin',
-    'password': 'zlgmcu!@#123'
+    'password': '********'
 
 }
