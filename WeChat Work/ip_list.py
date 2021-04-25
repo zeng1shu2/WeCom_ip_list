@@ -1,38 +1,61 @@
 # coding:utf-8
-
+from toosl import Client_Stmp, web_main
+import logging
 import json
 import httplib2
 import os
 import sys
-import Client_Stmp
-import web_main
+
+
+def log_info():
+    logging.basicConfig(level=logging.DEBUG,
+                        format="%(asctime)s %(filename)s [line:%(lineno)d] %(levelname)s %(message)s",
+                        filename='log/system.log',
+                        filemode='a'
+                        )
+    return logging
 
 
 def exit_app():
-    print("暂无更新的IP列表")
+    log_info().info('暂无任何可更新的IP与域名，程序将退出。')
     sys.exit()
 
 
+def check_dir():
+    if os.path.exists('log'):
+        path = os.path.abspath('log')
+        file = 'update_time.txt'
+        new_path = os.path.join(path, file)
+        return new_path
+    else:
+        os.mkdir('log')
+        log_info().info("log目录已创建成功")
+        path = os.path.abspath('log')
+        file = 'update_time.txt'
+        new_path = os.path.join(path, file)
+        return new_path
+
+
 def uptime_write(j_data):
-    path = os.getcwd()
-    file = 'update_time.txt'
-    new_path = os.path.join(path, file)
+    new_path = check_dir()
     if os.path.exists(new_path):
         if os.path.getsize(new_path) != 0:
             with open(new_path, 'r+') as f:
                 data = f.read()
-                return data
+                log_info().info('update_time存在，正在读取更新时间。')
+            return data
         else:
             with open(new_path, 'w+') as f:
-                f.write(j_data)
+                j_data = f.write(j_data)
                 return j_data
     else:
         with open(new_path, 'w+') as f:
-            f.write(j_data)
+            j_data = f.write(j_data)
+            return j_data
 
 
 def data_write(ip_data, domain_data):
-    path = os.getcwd()
+    path = os.path.abspath('log')
     ip_addr = os.path.join(path, 'ip_list.txt')
     domain = os.path.join(path, 'domain.txt')
     if os.path.exists(ip_addr and domain):
@@ -72,19 +95,37 @@ def main(fo_email, _url):
     if new_time == time:
         exit_app()
     else:
+        new_path = check_dir()
+        with open(new_path, 'w') as f:
+            log_info().info('正在写入新的更新时间')
+            f.write(new_time)
+
+        log_info().info('正在写入新的IP和域名。')
         j_dada = data_processing()
         data_write(j_dada[0], j_dada[1])
+        log_info().info('正在发送邮箱通知。')
+        log_info().info('正在调用浏览器。')
         web_main.web_main(_url)
+        log_info().info('调用浏览器完成。')
         Client_Stmp.client_main(fo_email)
 
 
 if __name__ == '__main__':
+    check_dir()
     _fo_email = str(input('请输入接收通知的邮箱地址：'))
-    if _fo_email.endswith('@xx.xx'):
+    name = '邮箱地址为：'
+    data_info = name, _fo_email
+    log_info().info(''.join(data_info))
+    if _fo_email.endswith('@zlg.cn'):
         _url = str(input("请输入AC管理地址："))
-        if _url.endswith(':xxxx'):
+        name = 'AC地址为：'
+        data_info = name, _url
+        log_info().info(''.join(data_info))
+        if _url.endswith(':25840'):
             main(_fo_email, _url)
         else:
+            log_info().warning('请输入正确的格式')
             raise TypeError('输入的格式不正确')
     else:
+        log_info().warning('请输入正确的格式')
         raise TypeError('输入的格式不正确')
