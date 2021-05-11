@@ -5,6 +5,19 @@ import json
 import httplib2
 import os
 import sys
+from ctypes import *
+
+
+def lock():
+    """锁定鼠标键盘"""
+    lock_ = windll.LoadLibrary('user32.dll')
+    lock_.BlockInput(True)
+
+
+def unlock():
+    """解锁鼠标键盘"""
+    lock_ = windll.LoadLibrary('user32.dll')
+    lock_.BlockInput(False)
 
 
 def log_info():
@@ -105,8 +118,10 @@ def main(fo_email, _url):
         data_write(j_dada[0], j_dada[1])
         log_info().info('正在发送邮箱通知。')
         log_info().info('正在调用浏览器。')
+        lock()
         web_main.web_main(_url)
         log_info().info('调用浏览器完成。')
+        unlock()
         Client_Stmp.client_main(fo_email)
 
 
